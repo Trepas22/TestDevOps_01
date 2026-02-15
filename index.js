@@ -3,7 +3,7 @@ const http = require('http');
 
 // Una función simple que queremos asegurar que funcione
 function sumar(a, b) {
-  return a - b;
+  return a + b;
 }
 
 const server = http.createServer((req, res) => {
