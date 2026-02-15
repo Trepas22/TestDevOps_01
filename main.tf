@@ -1,12 +1,12 @@
 terraform {
   cloud {
-    organization = "TU_ORGANIZACION" # La que creaste en el paso anterior
+    organization = "FPP_DevOps_Testing" # La que creaste en el paso anterior
 
     workspaces {
       name = "TestDevOps_01"
     }
   }
-  
+
   required_providers {
     docker = {
       source  = "kreuzwerker/docker"
