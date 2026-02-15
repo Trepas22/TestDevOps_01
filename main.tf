@@ -35,13 +35,19 @@ resource "aws_security_group" "allow_web" {
   }
 }
 
-# Creamos el servidor real (EC2)
+# Buscador dinámico de la imagen más reciente de Amazon Linux 2023
+data "aws_ami" "amazon_linux_2023" {
+  most_recent = true
+  owners      = ["amazon"]
+  filter {
+    name   = "name"
+    values = ["al2023-ami-kernel-6.1-x86_64"]
+  }
+}
+
 resource "aws_instance" "servidor_devops" {
-  # Esta AMI es de Amazon Linux 2023 (más moderna y compatible con t3)
-  ami           = "ami-051f8b21383da9879" 
-  
-  # Cambiamos de t2.micro a t3.micro
-  instance_type = "t3.micro"             
+  ami           = data.aws_ami.amazon_linux_2023.id # Usa el ID que encontró arriba
+  instance_type = "t3.micro"
 
   vpc_security_group_ids = [aws_security_group.allow_web.id]
 
@@ -57,7 +63,6 @@ resource "aws_instance" "servidor_devops" {
   tags = { Name = "MiServidorDevOps" }
 }
 
-# Esto nos dirá la dirección web para ver tu app
 output "url_publica" {
-  value = aws_instance.servidor_devops.public_dns
+  value = "http://${aws_instance.servidor_devops.public_ip}"
 }
