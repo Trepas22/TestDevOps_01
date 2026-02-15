@@ -1,4 +1,12 @@
 terraform {
+  cloud {
+    organization = "TU_ORGANIZACION" # La que creaste en el paso anterior
+
+    workspaces {
+      name = "TestDevOps_01"
+    }
+  }
+  
   required_providers {
     docker = {
       source  = "kreuzwerker/docker"
@@ -9,33 +17,19 @@ terraform {
 
 provider "docker" {}
 
-# Definimos la imagen que acabas de subir a Docker Hub
-resource "docker_image" "mi_app" {
-  name         = "trepas22/mi-app-devops:latest"
-  keep_locally = false
-}
-
-# Definimos el contenedor (el servidor ejecutándose)
-resource "docker_container" "servidor_web" {
-  image = docker_image.mi_app.image_id
-  name  = "mi-servidor-produccion"
-  ports {
-    internal = 3000
-    external = 8080
-  }
-}
-
-# Este bloque "pregunta" a Docker Hub cuál es el ID más reciente de tu imagen
+# 1. Consulta la información más reciente en Docker Hub
 data "docker_registry_image" "mi_app_info" {
-  name = "TU_USUARIO_DOCKER/mi-app-devops:latest"
+  name = "trepas22/mi-app-devops:latest"
 }
 
+# 2. Define la imagen usando el "trigger" de cambio
 resource "docker_image" "mi_app" {
   name          = data.docker_registry_image.mi_app_info.name
-  pull_triggers = [data.docker_registry_image.mi_app_info.sha256_digest] # ¡ESTA ES LA CLAVE!
+  pull_triggers = [data.docker_registry_image.mi_app_info.sha256_digest]
   keep_locally  = false
 }
 
+# 3. Define el contenedor
 resource "docker_container" "servidor_web" {
   image = docker_image.mi_app.image_id
   name  = "mi-servidor-produccion"
