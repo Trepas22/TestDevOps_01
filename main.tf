@@ -39,9 +39,15 @@ resource "aws_security_group" "allow_web" {
 data "aws_ami" "amazon_linux_2023" {
   most_recent = true
   owners      = ["amazon"]
+
   filter {
     name   = "name"
-    values = ["al2023-ami-kernel-6.1-x86_64"]
+    values = ["al2023-ami-2023*-x86_64"] # El asterisco busca la versión más reciente del año 2023 o superior
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
   }
 }
 
