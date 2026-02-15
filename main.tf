@@ -37,17 +37,21 @@ resource "aws_security_group" "allow_web" {
 
 # Creamos el servidor real (EC2)
 resource "aws_instance" "servidor_devops" {
-  ami           = "ami-0c7217cdde317cfec" # Amazon Linux 2 (Free Tier)
-  instance_type = "t2.micro"             # El tamaño gratuito
+  # Esta AMI es de Amazon Linux 2023 (más moderna y compatible con t3)
+  ami           = "ami-051f8b21383da9879" 
+  
+  # Cambiamos de t2.micro a t3.micro
+  instance_type = "t3.micro"             
+
   vpc_security_group_ids = [aws_security_group.allow_web.id]
 
-  # Este script instala Docker y corre tu app al arrancar
   user_data = <<-EOF
               #!/bin/bash
-              sudo yum update -y
-              sudo amazon-linux-extras install docker -y
-              sudo service docker start
-              sudo docker run -d -p 80:3000 trepas22/mi-app-devops:latest
+              dnf update -y
+              dnf install -y docker
+              systemctl start docker
+              systemctl enable docker
+              docker run -d -p 80:3000 trepas22/mi-app-devops:latest
               EOF
 
   tags = { Name = "MiServidorDevOps" }
