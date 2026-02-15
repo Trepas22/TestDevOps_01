@@ -9,7 +9,7 @@ function sumar(a, b) {
 const server = http.createServer((req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/plain');
-  res.end('¡Version 2.0 en vivo!');
+  res.end('Automatización Total Nivel 1 completa');
 });
 
 // Exportamos la función para el test
