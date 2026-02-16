@@ -72,3 +72,27 @@ resource "aws_instance" "servidor_devops" {
 output "url_publica" {
   value = "http://${aws_instance.servidor_devops.public_ip}"
 }
+
+# Creamos un "Topic" de notificaciones (donde se enviarán los avisos)
+resource "aws_sns_topic" "alertas_servidor" {
+  name = "alertas-cpu-servidor"
+}
+
+# Alarma de CloudWatch: Si la CPU supera el 70% durante 2 minutos
+resource "aws_cloudwatch_metric_alarm" "cpu_alta" {
+  alarm_name          = "cpu-excesiva-mi-app"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/EC2"
+  period              = "120"
+  statistic           = "Average"
+  threshold           = "70"
+  alarm_description   = "Esta métrica vigila si mi servidor se está estresando"
+  
+  dimensions = {
+    InstanceId = aws_instance.servidor_devops.id
+  }
+
+  alarm_actions = [aws_sns_topic.alertas_servidor.arn]
+}
