@@ -1,0 +1,17 @@
+{
+  "name": "fernando",
+  "version": "1.0.0",
+  "description": "Package npm json",
+  "main": "index.js",
+  "dependencies": {
+    "pg": "^8.18.0",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^6.6.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node ./cars/src/app.controller.ts"
+  },
+  "author": "",
+  "license": "ISC"
+}
